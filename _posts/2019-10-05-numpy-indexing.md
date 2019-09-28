@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Multi-dimensional Indexing in Numpy"
-date:   2019-09-21 11:52:00 +0200
+date:   2019-10-05 12:00:00 +0200
 categories: python timing
 ---
 
