@@ -5,7 +5,7 @@ date:   2019-09-28 12:00:00 +0200
 categories: python timing
 ---
 
-As the main topic of this blog is going to be timing experiments in Python, let's start by having a look at the main tool I use to perform these experiments: Python's built-in [`timeit`](https://docs.python.org/3/library/timeit.html) module.
+As the main topic of this blog is going to be timing experiments in Python, let's start by having a look at the main tool I use to perform these experiments: Python's built-in [`timeit`][1] module.
 
 In this post I will give a short and minimal introduction of the `timeit` module, and go over the three main ways to use it to time small snippets of Python code.
 
@@ -123,8 +123,22 @@ Setup snippets most commonly consist of non-indented code, so you can usually ju
 {% endhighlight %}
 
 ## Commandline: python -m timeit
+Python's `timeit` module can also be run as a commandline tool.
+
+{% highlight bash %}
+$ python -m timeit -n 10000 'pass'
+10000 loops, best of 3: 0.0109 usec per loop
+{% endhighlight %}
+
+The usage is similar to the imported function as shown in the previous section, although the `-n` option is more optional than in the imported function. What I mean with that? If you don't specify a number of times to run your snippet, it will try successive powers of 10 (10, 100, 1000, ...) until the total time spent is at least 0.2 seconds. It also reports the actual time per iteration, instead of having to calculate that yourself. This is reported in `nsec`, `usec`, `msec` or `sec`, for nano-, micro-, mili- and whole seconds respectively.
+
+{% highlight bash %}
+$ python3 -m timeit 'pass'
+100000000 loops, best of 3: 0.00856 usec per loop
+{% endhighlight %}
 
 ### Standalone one-liners
+Testing one-liners with the commandline is as easy as replacing `pass` from the introduction with the code you want to test, and the `timeit` tool will automatically report the time in a nice human-readable format.
 
 {% highlight bash %}
 $ python -m timeit '", ".join(str(n) for n in range(100))'
@@ -136,6 +150,7 @@ $ python -m timeit '", ".join(map(str, range(100)))'
 {% endhighlight %}
 
 ### Standalone multi-liners
+As before, the simplest way to test a snippet of multiple lines is to join the statements with a semicolon if no indentation is required. When indentation is required, the other option is to pass multiple strings as arguments to the command. Note that you still have to add the indentation properly yourself! This can get tricky to count if your indentation is more than a single level deep, but is usually not too hard.
 
 {% highlight bash %}
 $ python -m timeit 'x = []' 'for i in range(1000):' '    x.append(i)'
@@ -147,6 +162,14 @@ $ python -m timeit 'x = []' 'for i in range(1000):' '    x += [i]'
 
 
 ### Setup required
+To add some initial setup such as imports or variable declarations, we can use the `-s` option:
+
+{% highlight bash %}
+$ python3 -m timeit -s 'pass' 'pass'
+100000000 loops, best of 3: 0.00856 usec per loop
+{% endhighlight %}
+
+The setup *does* come before the statement to test in this case, so that makes it a bit more intuitive to read.
 
 {% highlight bash %}
 $ python -m timeit -s 'text = "sample string"; char = "g"' 'char in text'
@@ -155,48 +178,92 @@ $ python -m timeit -s 'text = "sample string"; char = "g"' 'text.find(char)'
 10000000 loops, best of 3: 0.147 usec per loop
 {% endhighlight %}
 
-## IPython magic command: %timeit
+## IPython/Jupyter magics: %timeit
+When working in the [IPython][2] interactive shell, or in a [Jupyter notebook][3] with the IPython kernel, you have access to the so-called ['magic commands'][4]. For timeit, there is the [`%timeit`][5] magic. It simply takes the code you type after it and runs the `timeit` command on it! Like magic!
+
+One small caveat is that the outcome is reported as a mean +/- standard deviation of multiple repetitions, while the original Python documentation suggests always using the minimum.
 
 ### Standalone one-liners
+For simple one-liners, just type the code as you would normally, and type `%timeit` before it. That's all!
 
+```python
+%timeit ", ".join(str(n) for n in range(100))
 ```
-In [1]: %timeit ", ".join(str(n) for n in range(100))
 24.1 µs ± 314 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-In [2]: %timeit ", ".join([str(n) for n in range(100)])
-20.4 µs ± 266 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-In [3]: %timeit ", ".join(map(str, range(100)))
-18.2 µs ± 777 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+```python
+%timeit ", ".join([str(n) for n in range(100)])
 ```
+20.4 µs ± 266 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+```python
+%timeit ", ".join(map(str, range(100)))
+```
+18.2 µs ± 777 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
 
 ### Standalone multi-liners
+The `%timeit` magic doesn't quite work for multi-line snippets though. Why? Because magics with a *single* `%` are *line-magics*. For *cell-magics*, you just have to add another `%` to make it `%%timeit`. Then it will time all the code in your cell. No further difficulties whatsoever! 
 
+```python
+%%timeit
+x = []
+for i in range(1000):
+    x.append(i)
 ```
-In [1]: %%timeit
-    ..: x = []
-    ..: for i in range(1000):
-    ..:     x.append(i)
-    ..:
 75.1 µs ± 39.8 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
 
-In [2]: %%timeit
-    ..: x = []
-    ..: for i in range(1000):
-    ..:     x += [i]
-    ..:
-72.4 µs ± 2.33 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+```python
+%%timeit
+x = []
+for i in range(1000):
+    x += [i]
 ```
+72.4 µs ± 2.33 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
 
 ### Setup required
+Now you might be thinking "but if this `%timeit` just takes your code and times it, where do I put my setup command?" The answer: just run it in some previous cell! As IPython already takes care of passing your code on to the `timeit` module properly, it also automatically passes along all current global variables. So we can simply first run a cell with our setup:
 
+```python
+text = "sample string"
+char = "g"
 ```
-In [1]: text = "sample string"
-In [2]: char = "g"
 
-In [3]: %timeit char in text
+And use the simple `%timeit` magic to time the code we are actually interested in, without specifying which setup is associated with it.
+
+```python
+%timeit char in text
+```
 49.9 ns ± 1.09 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
-
-In [4]: %timeit text.find(char)
-178 ns ± 24.6 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+```python
+%timeit text.find(char)
 ```
+178 ns ± 24.6 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+
+## Summary
+I hope to have shown in this article how you can easily use Python's `timeit` module to measure execution times of your snippets, whether for fun or profit. Although each has it's pros and cons (see below), I will personally recommend to use IPython's `(%)%timeit` magics as they are the most intuitive to use: just write the code as you would normally with the `%timeit` magic in front.
+
+### Pros and Cons
+- `from timeit import timeit`
+  - Pros:
+	+ Time taken returned within Python process, so can easily be used in further processing 
+  - Cons:
+    - Must specify number of iterations manually
+	- Must manually calculate amount of time spent per iteration
+- `python -m timeit`
+  - Pros:
+	+ Gives nice and clear output
+  - Cons:
+    - Multi-line snippets are less intuitive
+    - Commandline can be 'scary' to some
+- `(%)%timeit`
+  - Pros:
+	+ Easiest to use
+	+ Setup is dealt with automatically
+  - Cons:
+    - Needs Ipython and/or Jupyter installed
+	- Gives mean +/- standard deviation as result, when Python documentation suggests looking at the minimum
+
+
+[1]: https://docs.python.org/3/library/timeit.html
+[2]: https://pypi.org/project/ipython/
+[3]: https://jupyter.org/
+[4]: https://ipython.readthedocs.io/en/stable/interactive/magics.html
+[5]: https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-timeit
