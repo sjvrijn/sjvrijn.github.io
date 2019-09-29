@@ -30,17 +30,17 @@ In contrast to profiling the runtime of your entire program, the `timeit` module
   * `", ".join(map(str, range(100)))`
 2. Standalone multi-liners  
   * 
-  ```
-  x = []
-  for i in range(1000):
-      x.append(i)
-  ```
+```python
+        x = []
+        for i in range(1000):
+            x.append(i)
+```
   * 
-  ```
-  x = []
-  for i in range(1000):
-      x += [i]
-  ```
+```python
+        x = []
+        for i in range(1000):
+            x += [i]
+```
 *(ignoring for the sake of example that the list-comprehension `[i for i in range(1000)]` is twice as fast)*
 3. Either of the above with some setup required  
 **Setup** `text = "sample string"; char = "g"`
