@@ -22,7 +22,7 @@ What is Python's `timeit` module?
 > 
 > -- timeit documentation
 
-In contrast to profiling the runtime of your entire program, the `timeit` module is better suited to time small snippets. We can divide these comparisons in three classes, as illustrated by the examples I will use throuhgout this blogpost.
+In contrast to profiling the runtime of your entire program, the `timeit` module is better suited to time small snippets. We can divide these comparisons in three classes, as illustrated by the examples I will use throughout this blogpost.
 
 1. Standalone one-liners  
   * `", ".join(str(n) for n in range(100))`
@@ -43,7 +43,7 @@ In contrast to profiling the runtime of your entire program, the `timeit` module
 ```
 *(ignoring for the sake of example that the list-comprehension `[i for i in range(1000)]` is twice as fast)*
 3. Either of the above with some setup required  
-**Setup** `text = "sample string"; char = "g"`
+**Setup:** `text = "sample string"; char = "g"`
   * `char in text`
   * `text.find(char)`
 
@@ -258,8 +258,8 @@ I hope to have shown in this article how you can easily use Python's `timeit` mo
 	+ Easiest to use
 	+ Setup is dealt with automatically
   - Cons:
-    - Needs Ipython and/or Jupyter installed
-	- Gives mean +/- standard deviation as result, when Python documentation suggests looking at the minimum
+    - Needs IPython and/or Jupyter installed
+	- Gives mean +/- standard deviation as result, while Python's documentation suggests using the minimum
 
 
 [1]: https://docs.python.org/3/library/timeit.html
