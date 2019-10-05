@@ -23,7 +23,7 @@ If you want to index an element in a multi-dimensional (i.e. nested) list in Pyt
 
 This is already ugly for this 2-dimensional example, and for lists that have more levels of nesting it only gets worse.
 
-`Numpy` is a great python package for working with multi-dimensional numerical data. You can effectively use it the same as if it is still the same data-structure in Python.
+[`Numpy`][3] is a great python package for working with multi-dimensional numerical data. You can effectively use it the same as if it is still the same data-structure in Python.
 
 ```python
 >>> import numpy as np
@@ -53,7 +53,7 @@ Let's start with the 1D case to get a baseline:
 
 ```python
 A = np.zeros(8)
-In [18]: %timeit A[4]
+%timeit A[4]
 ```
 183 ns ± 3 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
 
@@ -95,6 +95,8 @@ To make sure we're getting the full picture, let's repeat the previous experimen
 
 The following script times the same indexing statement we've tested previously, and passes along the locally created array `A` to the `globals` parameter as an alternative to defining it as `setup`.
 
+By using `min(repeat(...))` instead of `timeit(...)` we get the minimum time out of 5 runs. This means our results are less likely influenced by any other processes that happen to be running at the same time during our script.
+
 *These experiments make heavy use of the Python 3.6+ f-strings. For more information on them, see [here][2] or let me know if you want me to write a blog post about them*
 
 ```python
@@ -115,6 +117,8 @@ for ndim in ndims:
 
 plt.plot(ndims, list_idxing, label='list indexing')
 plt.plot(ndims, tupl_idxing, label='tuple indexing')
+plt.xlabel("Number of dimensions")
+plt.ylabel("Microseconds per loop")
 plt.legend(loc=0)
 plt.show()
 ```
@@ -139,6 +143,8 @@ for ndim in ndims:
 
 plt.plot(ndims, list_idxing, label='list indexing')
 plt.plot(ndims, tupl_idxing, label='tuple indexing')
+plt.xlabel("Number of dimensions")
+plt.ylabel("Microseconds per loop")
 plt.legend(loc=0)
 plt.show()
 ```
@@ -154,3 +160,4 @@ Using tuple-indexing is significantly faster than nested indexing.
 
 [1]: https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html
 [2]: https://docs.python.org/3.7/reference/lexical_analysis.html#f-strings
+[3]: https://numpy.org/
