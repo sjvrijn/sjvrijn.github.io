@@ -2,7 +2,7 @@
 layout: post
 title:  "Multi-dimensional Indexing in Numpy"
 date:   2019-10-05 12:00:00 +0200
-categories: python timing
+tags: python timing
 ---
 
 [(This post is based on a StackOverflow answer)](https://stackoverflow.com/questions/57623010/optimizing-performance-of-list-comprehension-using-all-indexes-in-own-functions/57750084#57750084)

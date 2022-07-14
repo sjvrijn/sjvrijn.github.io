@@ -2,7 +2,7 @@
 layout: post
 title:  "Filtering elements from a list of tuples"
 date:   2019-10-16 07:00:00 +0200
-categories: python timing
+tags: python timing
 ---
 
 Recently I was writing some code to fill a 50 by 100 by 50 3D matrix with some calculated values, but only at the indices that passed a certain check: the first index has to be smaller than the second. The naive way to do this would be a nested for-loop with a `continue` if the check was not passed.

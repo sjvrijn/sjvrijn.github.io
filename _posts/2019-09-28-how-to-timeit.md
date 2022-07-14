@@ -2,7 +2,7 @@
 layout: post
 title:  "Python's timeit: a How-To"
 date:   2019-09-28 12:00:00 +0200
-categories: python timing
+tags: python timing
 ---
 
 As the main topic of this blog is going to be timing experiments in Python, let's start by having a look at the main tool I use to perform these experiments: Python's built-in [`timeit`][1] module.
